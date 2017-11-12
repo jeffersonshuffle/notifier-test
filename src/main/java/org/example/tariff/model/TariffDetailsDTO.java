@@ -8,7 +8,15 @@ import java.util.Date;
 
 public class TariffDetailsDTO {
 	
-   
+    public static  TariffDetailsDTO getEmpty(){
+        TariffDetailsDTO details=new TariffDetailsDTO();
+        details.setId(0L);
+        details.setDateLastModified(new Date());
+        details.setNomenclatureId(0L);
+        details.setTariffId(0L);
+        details.setPricePerUnit(BigDecimal.ZERO);
+        return details;
+    } 
     private Long id;
     private Long tariffId;
     private BigDecimal pricePerUnit;
@@ -25,50 +33,27 @@ public class TariffDetailsDTO {
     public Long getNomenclatureId() {
 	return nomenclatureId;
     }
-	public void setNomenclatureId(Long nomenclatureId) {
-		this.nomenclatureId = nomenclatureId;
-	}
-	public Long getId() {
-		return id;
-	}
-
-
-
+    public void setNomenclatureId(Long nomenclatureId) {
+	this.nomenclatureId = nomenclatureId;
+    }
+    public Long getId() {
+	return id;
+    }
 	
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-
-
-	
-	public BigDecimal getPricePerUnit() {
-		return pricePerUnit;
-	}
-
-
-
-	
-	public void setPricePerUnit(BigDecimal pricePerUnit) {
-		this.pricePerUnit = pricePerUnit;
-	}
-
-
-
-
-	public Date getDateLastModified() {
-		return dateLastModified;
-	}
-
-
-
-	
-	public void setDateLastModified(Date dateLastModified) {
-		this.dateLastModified = dateLastModified;
-	}
-
-
-
-
+    public void setId(Long id) {
+	this.id = id;
+    }
+    public BigDecimal getPricePerUnit() {
+	return pricePerUnit;
+    }
+    public void setPricePerUnit(BigDecimal pricePerUnit) {
+	this.pricePerUnit = pricePerUnit;
+    }
+    public Date getDateLastModified() {
+	return dateLastModified;
+    }
+    public void setDateLastModified(Date dateLastModified) {
+	this.dateLastModified = dateLastModified;
+    }
 
 }

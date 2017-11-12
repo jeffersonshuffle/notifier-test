@@ -118,6 +118,13 @@ public class TariffController
 		return new ServiceResponse<>(note);
 	}
         
+        @RequestMapping(value="/notify/empty", method=RequestMethod.GET)
+	public ServiceResponse<NotifyRequest> getEmptyNotificationRequest() {
+		
+		
+		return new ServiceResponse<>(NotifyRequest.getEmpty());
+	}
+        
         @RequestMapping(value="/tariffs/update/{id}", method=RequestMethod.POST)
 	public ServiceResponse<?> ubdateTariffDetails( @PathVariable(value="id") Long tariffId,
                 @RequestBody TariffDetailsDTO details) {

@@ -12,12 +12,22 @@ import java.util.Date;
  * @author root
  */
 public class NotifyRequest {
+    public static NotifyRequest getEmpty(){
+        NotifyRequest request=new NotifyRequest();
+        request.setUser(UserDTO.getEmpty());
+        request.setTariff(TariffDTO.getEmpty());
+        request.setStartOfPeriod(new Date());
+        request.setEndOfPeriod(new Date());
+        return request;
+    }
     
     UserDTO user;
     TariffDTO tariff;
     Date startOfPeriod;
     Date endOfPeriod;
-
+    
+    public NotifyRequest(){
+    }
     public UserDTO getUser() {
         return user;
     }
