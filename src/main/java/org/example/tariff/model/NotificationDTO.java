@@ -1,9 +1,18 @@
 package org.example.tariff.model;
 
 
+
+import java.io.StringWriter;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
+
+import org.example.tariff.config.NotificationConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 
@@ -11,57 +20,25 @@ import java.util.List;
 
 
 public class NotificationDTO {
-	static final List<String> subjectTemplate=new LinkedList<>(); 
-			
+
+    
+    NotificationConfig notificationTemplate;
 	
-	static final List<String> bodyTemplate= new LinkedList<>();
-			
-			
-	static{
-            subjectTemplate.add("Changes in tariff plan ");
-            subjectTemplate.add("${tariffName}");
-            bodyTemplate.add("Tariff ");
-            bodyTemplate.add("${tariffName}");
-            bodyTemplate.add(" has the following changes in conditions of service ");
-            bodyTemplate.add("${nomenclature}");
-            bodyTemplate.add(": old price is ");
-            bodyTemplate.add("${oldPrice}");
-            bodyTemplate.add("${currency}");
-            bodyTemplate.add(" new price is ");
-            bodyTemplate.add("${newPrice}");
-            bodyTemplate.add("${currency}");
-            bodyTemplate.add(", respectivly.");
-        }		
-	
-	private String notificationSubjectTemplate;
-
-    public String getNotificationSubjectTemplate() {
-        return notificationSubjectTemplate;
-    }
-
-    public void setNotificationSubjectTemplate(String notificationSubjectTemplate) {
-        this.notificationSubjectTemplate = notificationSubjectTemplate;
-    }
-
-    public String getNotificationBodyTemplate() {
-        return notificationBodyTemplate;
-    }
-
-    public void setNotificationBodyTemplate(String notificationBodyTemplate) {
-        this.notificationBodyTemplate = notificationBodyTemplate;
-    }
-	private String notificationBodyTemplate;
-	private Long tariffId;
+    
+    private Long tariffId;
     private String tariffName;
     private String nomenclature;
-  
     private Long oldPrice;
-   
     private Long newPrice;
-  
     private Date date;
     private String subject;
     private String body;
+    
+   
+    public NotificationDTO initNotificationTemplate(NotificationConfig notificationTemplate){
+        this.notificationTemplate=notificationTemplate;
+        return this;
+    }
 
     public String getSubject() {
         return subject;
@@ -88,68 +65,40 @@ public class NotificationDTO {
     }
    
     void generateSubject(){
-        StringBuilder sb=new StringBuilder();
-        for(String s:bodyTemplate){
-            boolean b=true;
-            if(s.equals("${tariffName}")){
-                sb.append(tariffName);
-                b=false;
-            }
-             if(b){
-                sb.append(s);
-               
-            }
-        }
-        subject=sb.toString();
+        Map map = new HashMap();
+        map.put("tariffName", tariffName);
+        VelocityEngine ve = new VelocityEngine();
+        ve.init();
+        VelocityContext context = new VelocityContext();
+        context.put("subject", map);
+  
+        StringWriter writer = new StringWriter();
+        Velocity.evaluate(context, writer, "Error processing subject ", notificationTemplate.getSubject());
+  
+        setSubject( writer.toString() );
         
     }
     void generateBody(){
-        StringBuilder sb= new StringBuilder();
-        for(String s:bodyTemplate){
-            boolean b=true;
-            if(s.equals("${tariffName}")){
-                sb.append(tariffName);
-                b=false;
-            }
-            if(s.equals("${nomenclature}")){
-                sb.append(nomenclature);
-                b=false;
-            }
-            if(s.equals("${oldPrice}")){
-                sb.append(oldPrice);
-                 b=false;
-            }
-            if(s.equals("${currency}")){
-                sb.append("RuR");
-                b=false;
-            }
-            if(s.equals("${newPrice}")){
-                sb.append(newPrice);
-                b=false;
-            }
-            if(b){
-                sb.append(s);
-               
-            }
-                    
-        }
-        body=sb.toString();
+        Map map = new HashMap();
+        map.put("tariffName", tariffName);
+        map.put("nomenclature", nomenclature);
+        map.put("oldPrice", oldPrice);
+        map.put("currency", "RuR");
+        map.put("newPrice", newPrice);
+        VelocityEngine ve = new VelocityEngine();
+        ve.init();
+        VelocityContext context = new VelocityContext();
+        context.put("subject", map);
+      
+        StringWriter writer = new StringWriter();
+     
+        Velocity.evaluate(context, writer, "Error processing body ", notificationTemplate.getBody());
+        setBody( writer.toString() );
     }
-    StringBuilder generateSubjectTemplate(){
-        StringBuilder sb=new StringBuilder();
-          subjectTemplate.stream().forEach(s->sb.append(s));
-        notificationSubjectTemplate=sb.toString();
-        return sb;
-    }
-    StringBuilder generateBodyTemplate(){
-        StringBuilder sb=new StringBuilder();
-        bodyTemplate.stream().forEach(s->sb.append(s));
-        notificationBodyTemplate=sb.toString();
-        return sb;
-    }
+    
     public NotificationDTO generateNotificationTemplate() {
-    	generateSubjectTemplate();
-        generateBodyTemplate();
+    	this.setSubject(notificationTemplate.getSubject());
+        this.setBody(notificationTemplate.getBody());
         	
         return this;
     }

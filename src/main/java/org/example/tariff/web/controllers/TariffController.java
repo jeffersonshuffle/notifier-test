@@ -59,7 +59,7 @@ public class TariffController
                     .append("<p>/tariffs/update/{id} METOD POST PARAMS id REQUEST BODY json object tariff detais</p>");
              return  sb.toString();
         }
-        @RequestMapping(value="/test{id}", method=RequestMethod.GET)
+        @RequestMapping(value="/test/{id}", method=RequestMethod.GET)
         public ServiceResponse<?> test(@PathVariable(value="id") Long tariffId){
             TariffDTO t= tariffService.findById(tariffId);
              Random randomGenerator = new Random();
@@ -71,7 +71,8 @@ public class TariffController
             float fraction = (float)(0.9*range * randomGenerator.nextFloat());
             float f=start+fraction;
             BigDecimal value = new BigDecimal(f,new MathContext(2, RoundingMode.HALF_EVEN));
-            t.getTariffDetailsCollection().forEach(d->d.setPricePerUnit(value));
+           
+            t.getTariffDetailsCollection().forEach(d->d.setPricePerUnit(value ));
             t.getTariffDetailsCollection().forEach(d->{tariffService.updateDetailsFor(t.getId(), d);});        
                   
             
@@ -109,14 +110,18 @@ public class TariffController
         
 	
         
-	@RequestMapping(value="/notify", method=RequestMethod.POST)
-	public ServiceResponse<NotificationDTO> notifyUser(
+	@RequestMapping(value="/notify/{nType}", method=RequestMethod.POST)
+	public ServiceResponse<NotificationDTO> sendNotification(
+                @PathVariable(value="nType") int notificationType,
                 @RequestBody NotifyRequest request) {
-		if(request.getUser().getId()==0||request.getTariff().getId()==0)throw new IllegalArgumentException();
-		NotificationDTO note=notificationService.processRequestNotification(request);
+		if(request.getUser().getId()==0||request.getTariff().getId()==0
+                        ||notificationType<0||notificationType>1)
+                    throw new IllegalArgumentException();
+		NotificationDTO note=notificationService.processRequestNotification(notificationType,request);
 		
 		return new ServiceResponse<>(note);
 	}
+
         
         @RequestMapping(value="/notify/empty", method=RequestMethod.GET)
 	public ServiceResponse<NotifyRequest> getEmptyNotificationRequest() {

@@ -1,6 +1,7 @@
 package org.example.tariff.services;
 import java.util.Date;
 import java.util.List;
+import org.example.tariff.config.NotificationConfig;
 import org.example.tariff.entities.NotificationQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,31 +26,41 @@ public class NotificationService {
 	NotificationRepository notificationRepository;
         @Autowired
         NotificationQueryRepository queryRepository;
-        
+         @Autowired
+        NotificationConfig notificationTemplate;
         
 	@Transactional( readOnly= true ,
 			timeout=30,
 			propagation= Propagation. SUPPORTS ,
 			isolation= Isolation. DEFAULT )
-	public NotificationDTO getNotificationFor(Long tariffId) {
+	public NotificationDTO getNotificationTemplateFor(Long tariffId) {
 		 PriceChangeReport r=notificationRepository.findByTariffId( tariffId);
                  return BeanCopyUtil.toNotificationDTO(r)
-                                    .generateNotificationTemplate()
-                                    .generateNotification();
+                                .initNotificationTemplate(notificationTemplate)
+                                .generateNotificationTemplate();
 	}
-        
+        public NotificationDTO getNotificationMessageFor(Long tariffId) {
+		 PriceChangeReport r=notificationRepository.findByTariffId( tariffId);
+                 return BeanCopyUtil.toNotificationDTO(r)
+                         .initNotificationTemplate(notificationTemplate)
+                         .generateNotification();
+	}
         
         @Transactional( readOnly= false ,
 			timeout=30,
 			propagation= Propagation. SUPPORTS ,
 			isolation= Isolation. DEFAULT )
-        public NotificationDTO processRequestNotification(NotifyRequest request){
+        public NotificationDTO processRequestNotification(int notificationType,NotifyRequest request){
             if(request.getStartOfPeriod().compareTo(new Date())<=0)
-                return getNotificationFor(request.getTariff().getId());
+                if(notificationType==0)
+                    return getNotificationMessageFor(request.getTariff().getId());
+                else if(notificationType==1)
+                    return getNotificationTemplateFor(request.getTariff().getId());
+            
             NotificationQuery n=new NotificationQuery(0L, request.getTariff().getId()
                     , request.getUser().getId(), request.getStartOfPeriod(), request.getEndOfPeriod());
             queryRepository.save(n);
-            sendNotifications();
+            //sendNotifications();
             return null;
         }
         
@@ -59,9 +70,15 @@ public class NotificationService {
 			propagation= Propagation. SUPPORTS ,
 			isolation= Isolation. DEFAULT )
 	public void sendNotifications() {
-                List<NotificationQuery> queries= queryRepository.findByStartBefore(new Date());
-		if(queries==null)return;
-                queries.stream().forEach(q->queryRepository.delete(q.getId()));
+            List<NotificationQuery> queries= queryRepository.findByStartBefore(new Date());
+            if(queries==null)return;
+            processSend(queries);
 	}
+        
+        // mock for notification queue processing
+        // just delete
+        void processSend(List<NotificationQuery> queries){
+            queries.stream().forEach(q->queryRepository.delete(q.getId()));
+        }
 
 }
