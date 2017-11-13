@@ -69,8 +69,8 @@ public class NotificationDTO {
         map.put("tariffName", tariffName);
         VelocityEngine ve = new VelocityEngine();
         ve.init();
-        VelocityContext context = new VelocityContext();
-        context.put("subject", map);
+        VelocityContext context = new VelocityContext(map);
+        
   
         StringWriter writer = new StringWriter();
         Velocity.evaluate(context, writer, "Error processing subject ", notificationTemplate.getSubject());
@@ -87,8 +87,8 @@ public class NotificationDTO {
         map.put("newPrice", newPrice);
         VelocityEngine ve = new VelocityEngine();
         ve.init();
-        VelocityContext context = new VelocityContext();
-        context.put("subject", map);
+        VelocityContext context = new VelocityContext(map);
+        
       
         StringWriter writer = new StringWriter();
      
