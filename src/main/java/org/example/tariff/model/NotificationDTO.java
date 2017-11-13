@@ -12,7 +12,7 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
 import org.example.tariff.config.NotificationConfig;
-import org.springframework.beans.factory.annotation.Autowired;
+
 
 
 
