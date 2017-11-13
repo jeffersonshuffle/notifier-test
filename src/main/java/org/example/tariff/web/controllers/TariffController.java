@@ -2,6 +2,7 @@ package org.example.tariff.web.controllers;
 
  
 
+import io.swagger.annotations.ApiOperation;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -59,6 +60,8 @@ public class TariffController
                     .append("<p>/tariffs/update/{id} METOD POST PARAMS id REQUEST BODY json object tariff detais</p>");
              return  sb.toString();
         }
+        
+        @ApiOperation(value = "Testing update details of tariff with id")
         @RequestMapping(value="/test/{id}", method=RequestMethod.GET)
         public ServiceResponse<?> test(@PathVariable(value="id") Long tariffId){
             TariffDTO t= tariffService.findById(tariffId);
@@ -78,7 +81,8 @@ public class TariffController
             
             return new ServiceResponse<>(HttpStatus.OK);
         }
-	
+        
+	@ApiOperation(value ="View a list of available users")
 	@RequestMapping(value="/users", method=RequestMethod.GET)
         
 	public ServiceResponse<Page<UserDTO>> listUsers(@RequestParam(name="page", defaultValue="0") int page, 
@@ -94,6 +98,8 @@ public class TariffController
 		}
 		return new ServiceResponse<>(pageData);
 	}
+        
+        @ApiOperation(value ="View a list of available tariffs")
 	@RequestMapping(value="/tariffs", method=RequestMethod.GET)
 	public ServiceResponse<Page<TariffDTO>> listTariffs(@RequestParam(name="page", defaultValue="0") int page, 
 			@RequestParam(name="size", defaultValue="5") int size) {
@@ -109,7 +115,7 @@ public class TariffController
 	}
         
 	
-        
+        @ApiOperation(value ="Notify user about tariff changes; nType is notification Type (0-message,1-template)")
 	@RequestMapping(value="/notify/{nType}", method=RequestMethod.POST)
 	public ServiceResponse<NotificationDTO> sendNotification(
                 @PathVariable(value="nType") int notificationType,
@@ -122,7 +128,7 @@ public class TariffController
 		return new ServiceResponse<>(note);
 	}
 
-        
+        @ApiOperation(value ="Get empty notification request for /notify/{nType}" )
         @RequestMapping(value="/notify/empty", method=RequestMethod.GET)
 	public ServiceResponse<NotifyRequest> getEmptyNotificationRequest() {
 		
@@ -130,6 +136,7 @@ public class TariffController
 		return new ServiceResponse<>(NotifyRequest.getEmpty());
 	}
         
+        @ApiOperation(value ="Update tariff details with id" )
         @RequestMapping(value="/tariffs/update/{id}", method=RequestMethod.POST)
 	public ServiceResponse<?> ubdateTariffDetails( @PathVariable(value="id") Long tariffId,
                 @RequestBody TariffDetailsDTO details) {
