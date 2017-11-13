@@ -15,6 +15,7 @@ import org.example.tariff.model.NotifyRequest;
 import org.example.tariff.repositories.NotificationQueryRepository;
 import org.example.tariff.repositories.NotificationRepository;
 import org.example.tariff.utils.BeanCopyUtil;
+import org.springframework.scheduling.annotation.Scheduled;
 
 
 
@@ -64,7 +65,7 @@ public class NotificationService {
             return null;
         }
         
-        
+        @Scheduled(fixedDelay=10000)
         @Transactional( readOnly= false ,
 			timeout=30,
 			propagation= Propagation. SUPPORTS ,
