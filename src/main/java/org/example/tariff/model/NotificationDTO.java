@@ -22,7 +22,7 @@ import org.example.tariff.config.NotificationConfig;
 public class NotificationDTO {
 
     
-    NotificationConfig notificationTemplate;
+    NotificationConfig notificationConfig;
 	
     
     private Long tariffId;
@@ -35,8 +35,8 @@ public class NotificationDTO {
     private String body;
     
    
-    public NotificationDTO initNotificationTemplate(NotificationConfig notificationTemplate){
-        this.notificationTemplate=notificationTemplate;
+    public NotificationDTO initNotificationTemplate(NotificationConfig notificationConfig){
+        this.notificationConfig=notificationConfig;
         return this;
     }
 
@@ -64,50 +64,6 @@ public class NotificationDTO {
         this.tariffName = tariffName;
     }
    
-    void generateSubject(){
-        Map map = new HashMap();
-        map.put("tariffName", tariffName);
-        VelocityEngine ve = new VelocityEngine();
-        ve.init();
-        VelocityContext context = new VelocityContext(map);
-        
-  
-        StringWriter writer = new StringWriter();
-        Velocity.evaluate(context, writer, "Error processing subject ", notificationTemplate.getSubject());
-  
-        setSubject( writer.toString() );
-        
-    }
-    void generateBody(){
-        Map map = new HashMap();
-        map.put("tariffName", tariffName);
-        map.put("nomenclature", nomenclature);
-        map.put("oldPrice", oldPrice);
-        map.put("currency", "RuR");
-        map.put("newPrice", newPrice);
-        VelocityEngine ve = new VelocityEngine();
-        ve.init();
-        VelocityContext context = new VelocityContext(map);
-        
-      
-        StringWriter writer = new StringWriter();
-     
-        Velocity.evaluate(context, writer, "Error processing body ", notificationTemplate.getBody());
-        setBody( writer.toString() );
-    }
-    
-    public NotificationDTO generateNotificationTemplate() {
-    	this.setSubject(notificationTemplate.getSubject());
-        this.setBody(notificationTemplate.getBody());
-        	
-        return this;
-    }
-    public NotificationDTO generateNotification() {
-    	generateSubject();
-        generateBody();
-        	
-        return this;
-    }
 
 	public Long getTariffId() {
 		return tariffId;
@@ -157,4 +113,50 @@ public class NotificationDTO {
 	public void setDate(Date date) {
 		this.date = date;
 	}
+
+        void generateSubject(){
+        Map map = new HashMap();
+        map.put("tariffName", tariffName);
+        VelocityEngine ve = new VelocityEngine();
+        ve.init();
+        VelocityContext context = new VelocityContext(map);
+        
+  
+        StringWriter writer = new StringWriter();
+        Velocity.evaluate(context, writer, "Error processing subject ", notificationConfig.getSubject());
+  
+        setSubject( writer.toString() );
+        
+    }
+    void generateBody(){
+        Map map = new HashMap();
+        map.put(notificationConfig.getTariffName(), tariffName);
+        map.put(notificationConfig.getNomenclature(), nomenclature);
+        map.put(notificationConfig.getOldPrice(), oldPrice);
+        map.put(notificationConfig.getCurrency(), notificationConfig.getCurrencyValue());
+        map.put(notificationConfig.getNewPrice(), newPrice);
+        VelocityEngine ve = new VelocityEngine();
+        ve.init();
+        VelocityContext context = new VelocityContext(map);
+        
+      
+        StringWriter writer = new StringWriter();
+     
+        Velocity.evaluate(context, writer, "Error processing body ", notificationConfig.getBody());
+        setBody( writer.toString() );
+    }
+    
+    public NotificationDTO generateNotificationTemplate() {
+    	this.setSubject(notificationConfig.getSubject());
+        this.setBody(notificationConfig.getBody());
+        	
+        return this;
+    }
+    public NotificationDTO generateNotification() {
+    	generateSubject();
+        generateBody();
+        	
+        return this;
+    }
+
 }

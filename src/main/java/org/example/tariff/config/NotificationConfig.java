@@ -35,8 +35,17 @@ public class NotificationConfig {
     String currency;
     @Value("${notification.newPrice}")
     String newPrice;
-      
+    @Value("${notification.currencyValue}")
+    String currencyValue;  
     //getters setters    
+
+    public String getCurrencyValue() {
+        return currencyValue;
+    }
+
+    public void setCurrencyValue(String currencyValue) {
+        this.currencyValue = currencyValue;
+    }
         
     public String getTariffName() {
         return tariffName;
