@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Configuration
 @Component
 @ConfigurationProperties
-@PropertySource("classpath:notification")
+@PropertySource("classpath:notification.properties")
 public class NotificationConfig {
     @Value("${notification.subject}")
     String subject;
