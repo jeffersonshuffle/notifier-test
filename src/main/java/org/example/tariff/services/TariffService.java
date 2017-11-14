@@ -3,6 +3,9 @@ package org.example.tariff.services;
 
 
 import java.util.Date;
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +15,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.example.tariff.entities.Tariff;
 import org.example.tariff.entities.TariffDetails;
+
+import org.example.tariff.exceptions.EntityNotFoundException;
 import org.example.tariff.model.TariffDTO;
 import org.example.tariff.model.TariffDetailsDTO;
 import org.example.tariff.repositories.TariffDetailsRepository;
@@ -59,10 +64,13 @@ public class TariffService
 			timeout=30,
 			propagation= Propagation. SUPPORTS ,
 			isolation= Isolation. DEFAULT )
-        public void updateDetailsFor(Long id,TariffDetailsDTO details){
-            if(details==null)throw new IllegalArgumentException();
+        public void updateDetailsFor(Long tariffId,TariffDetailsDTO details){
+            if(details==null)throw new IllegalArgumentException("details must not be null");
+            if(!tariffRepository.exists(tariffId))
+                throw new EntityNotFoundException(tariffId,this.toString());
             TariffDetails item=detailsRepository.findOne(details.getId());
-            if(item==null)return;
+                                                    
+            
             TariffDetails d= BeanCopyUtil.toTariffDetails(details);
           
             item.updateFrom(d);
@@ -73,5 +81,6 @@ public class TariffService
             tariffRepository.save(t);
         }
 	
+        
 	
 }

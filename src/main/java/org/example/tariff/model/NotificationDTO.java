@@ -22,6 +22,7 @@ import org.example.tariff.config.NotificationProperties;
 public class NotificationDTO {
 
     
+    
     NotificationProperties notificationConfig;
 	
     
@@ -34,7 +35,10 @@ public class NotificationDTO {
     private String subject;
     private String body;
     
-   
+   public static NotificationDTO getEmty(){
+       return new NotificationDTO();
+   }
+    
     public NotificationDTO initNotificationTemplate(NotificationProperties notificationConfig){
         this.notificationConfig=notificationConfig;
         return this;

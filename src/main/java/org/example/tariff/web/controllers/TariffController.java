@@ -66,6 +66,7 @@ public class TariffController
         @RequestMapping(value="/test/{id}", method=RequestMethod.GET)
         public HttpEntity<?> test(@PathVariable(value="id") Long tariffId){
             TariffDTO t= tariffService.findById(tariffId);
+                   
              Random randomGenerator = new Random();
              
              float start=0.1f;
@@ -119,14 +120,16 @@ public class TariffController
         @ApiOperation(value ="Notify user about tariff changes; nType is notification Type (0-message,1-template)")
 	@RequestMapping(value="/notify/{nType}", method=RequestMethod.POST)
 	public HttpEntity<NotificationDTO> sendNotification(
-                @PathVariable(value="nType") int notificationType,
+                @PathVariable(value="nType") String notificationType,
                 @RequestBody NotifyRequest request) {
-		if(request.getUser().getId()==0||request.getTariff().getId()==0
-                        ||notificationType<0||notificationType>1)
+		if(request.getUser().getId()==0||request.getTariff().getId()==0)
                     throw new IllegalArgumentException();
+                
 		NotificationDTO note=notificationService.processRequestNotification(notificationType,request);
-		
-		return new ServiceResponse<>(note);
+		if(note.getSubject()!=null)
+                    return new ServiceResponse<>(note);
+                else
+                    return new ServiceResponse<>(HttpStatus.OK);
 	}
 
         @ApiOperation(value ="Get empty notification request for /notify/{nType}" )

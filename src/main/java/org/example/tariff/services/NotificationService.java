@@ -51,18 +51,19 @@ public class NotificationService {
 			timeout=30,
 			propagation= Propagation. SUPPORTS ,
 			isolation= Isolation. DEFAULT )
-        public NotificationDTO processRequestNotification(int notificationType,NotifyRequest request){
+        public NotificationDTO processRequestNotification(String notificationType,NotifyRequest request){
             if(request.getStartOfPeriod().compareTo(new Date())<=0)
-                if(notificationType==0)
-                    return getNotificationMessageFor(request.getTariff().getId());
-                else if(notificationType==1)
+                if(notificationType.equals("t"))
                     return getNotificationTemplateFor(request.getTariff().getId());
+                else 
+                    return getNotificationMessageFor(request.getTariff().getId());
+                    
             
             NotificationQuery n=new NotificationQuery(0L, request.getTariff().getId()
                     , request.getUser().getId(), request.getStartOfPeriod(), request.getEndOfPeriod());
             queryRepository.save(n);
-            //sendNotifications();
-            return null;
+            
+            return NotificationDTO.getEmty();
         }
         
         @Scheduled(fixedDelay=10000)
