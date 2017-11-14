@@ -21,5 +21,5 @@ API Description get from:
                     <p>REQUEST BODY json request notification object {user object, tariff object,start of period, end of period} </p>
                     <p><b>Example</b></p>
                     <p>{"user":{"id":2,"firstName":"petr","lastName":"petr","tariffId":1,"tariffName":"good"},"tariff":{"id":1,"name":"good","dateCreated":"2017-11-09","tariffDetailsCollection":[{"id":2,"tariffId":1,"pricePerUnit":0.10,"dateLastModified":"2016-11-11","nomenclatureId":2},{"id":1,"tariffId":1,"pricePerUnit":0.01,"dateLastModified":"2016-11-11","nomenclatureId":1}],"active":true},"startOfPeriod":"2017-01-01","endOfPeriod":1510493026701}</p>
-                   <p><b>/tariffs/update/{id}</b> METOD POST PARAMS id REQUEST BODY json object tariff detais</p>
-                   <p><b>/notify/empty</b> - empty request notification object for /notify/t method</p>
+                   <p><b>/tariffs/update/{id}</b> METOD POST PARAMS id - tariff id REQUEST BODY json object tariff detais</p>
+                   <p><b>/notify/empty</b> - empty request notification object for <b>/notify</b> and <b>/notify/t</b> methods</p>
