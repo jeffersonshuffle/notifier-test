@@ -86,7 +86,7 @@ public class TariffController
 	@RequestMapping(value="/users", method=RequestMethod.GET)
         
 	public ServiceResponse<Page<UserDTO>> listUsers(@RequestParam(name="page", defaultValue="0") int page, 
-			@RequestParam(name="size", defaultValue="5") int size) {
+			@RequestParam(name="size", defaultValue="1") int size) {
              if(size==0)throw new IllegalArgumentException("Page size must not be less than one!");
             if(size>100)size=100;
 		PageRequest request = new PageRequest(page, size);
@@ -102,7 +102,7 @@ public class TariffController
         @ApiOperation(value ="View a list of available tariffs")
 	@RequestMapping(value="/tariffs", method=RequestMethod.GET)
 	public ServiceResponse<Page<TariffDTO>> listTariffs(@RequestParam(name="page", defaultValue="0") int page, 
-			@RequestParam(name="size", defaultValue="5") int size) {
+			@RequestParam(name="size", defaultValue="1") int size) {
             if(size==0)throw new IllegalArgumentException("Page size must not be less than one!");
             if(size>100)size=100;
                              
