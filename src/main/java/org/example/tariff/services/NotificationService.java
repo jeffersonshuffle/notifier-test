@@ -1,7 +1,7 @@
 package org.example.tariff.services;
 import java.util.Date;
 import java.util.List;
-import org.example.tariff.config.NotificationConfig;
+import org.example.tariff.config.NotificationProperties;
 import org.example.tariff.entities.NotificationQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,7 +28,7 @@ public class NotificationService {
         @Autowired
         NotificationQueryRepository queryRepository;
          @Autowired
-        NotificationConfig notificationTemplate;
+        NotificationProperties notificationTemplate;
         
 	@Transactional( readOnly= true ,
 			timeout=30,

@@ -23,6 +23,7 @@ import org.example.tariff.model.*;
 import org.example.tariff.services.NotificationService;
 import org.example.tariff.services.TariffService;
 import org.example.tariff.services.UserService;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -63,7 +64,7 @@ public class TariffController
         
         @ApiOperation(value = "Testing update details of tariff with id")
         @RequestMapping(value="/test/{id}", method=RequestMethod.GET)
-        public ServiceResponse<?> test(@PathVariable(value="id") Long tariffId){
+        public HttpEntity<?> test(@PathVariable(value="id") Long tariffId){
             TariffDTO t= tariffService.findById(tariffId);
              Random randomGenerator = new Random();
              
@@ -85,7 +86,7 @@ public class TariffController
 	@ApiOperation(value ="View a list of available users")
 	@RequestMapping(value="/users", method=RequestMethod.GET)
         
-	public ServiceResponse<Page<UserDTO>> listUsers(@RequestParam(name="page", defaultValue="0") int page, 
+	public HttpEntity<Page<UserDTO>> listUsers(@RequestParam(name="page", defaultValue="0") int page, 
 			@RequestParam(name="size", defaultValue="1") int size) {
              if(size==0)throw new IllegalArgumentException("Page size must not be less than one!");
             if(size>100)size=100;
@@ -101,7 +102,7 @@ public class TariffController
         
         @ApiOperation(value ="View a list of available tariffs")
 	@RequestMapping(value="/tariffs", method=RequestMethod.GET)
-	public ServiceResponse<Page<TariffDTO>> listTariffs(@RequestParam(name="page", defaultValue="0") int page, 
+	public HttpEntity<Page<TariffDTO>> listTariffs(@RequestParam(name="page", defaultValue="0") int page, 
 			@RequestParam(name="size", defaultValue="1") int size) {
             if(size==0)throw new IllegalArgumentException("Page size must not be less than one!");
             if(size>100)size=100;
@@ -117,7 +118,7 @@ public class TariffController
 	
         @ApiOperation(value ="Notify user about tariff changes; nType is notification Type (0-message,1-template)")
 	@RequestMapping(value="/notify/{nType}", method=RequestMethod.POST)
-	public ServiceResponse<NotificationDTO> sendNotification(
+	public HttpEntity<NotificationDTO> sendNotification(
                 @PathVariable(value="nType") int notificationType,
                 @RequestBody NotifyRequest request) {
 		if(request.getUser().getId()==0||request.getTariff().getId()==0
@@ -130,7 +131,7 @@ public class TariffController
 
         @ApiOperation(value ="Get empty notification request for /notify/{nType}" )
         @RequestMapping(value="/notify/empty", method=RequestMethod.GET)
-	public ServiceResponse<NotifyRequest> getEmptyNotificationRequest() {
+	public HttpEntity<NotifyRequest> getEmptyNotificationRequest() {
 		
 		
 		return new ServiceResponse<>(NotifyRequest.getEmpty());
@@ -138,7 +139,7 @@ public class TariffController
         
         @ApiOperation(value ="Update tariff details with id" )
         @RequestMapping(value="/tariffs/update/{id}", method=RequestMethod.POST)
-	public ServiceResponse<?> ubdateTariffDetails( @PathVariable(value="id") Long tariffId,
+	public HttpEntity<?> ubdateTariffDetails( @PathVariable(value="id") Long tariffId,
                 @RequestBody TariffDetailsDTO details) {
 		tariffService.updateDetailsFor(tariffId,details);
 		return new ServiceResponse<>(HttpStatus.OK);

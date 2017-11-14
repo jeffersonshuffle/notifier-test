@@ -11,7 +11,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
-import org.example.tariff.config.NotificationConfig;
+import org.example.tariff.config.NotificationProperties;
 
 
 
@@ -22,7 +22,7 @@ import org.example.tariff.config.NotificationConfig;
 public class NotificationDTO {
 
     
-    NotificationConfig notificationConfig;
+    NotificationProperties notificationConfig;
 	
     
     private Long tariffId;
@@ -35,7 +35,7 @@ public class NotificationDTO {
     private String body;
     
    
-    public NotificationDTO initNotificationTemplate(NotificationConfig notificationConfig){
+    public NotificationDTO initNotificationTemplate(NotificationProperties notificationConfig){
         this.notificationConfig=notificationConfig;
         return this;
     }

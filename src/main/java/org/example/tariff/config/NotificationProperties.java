@@ -5,36 +5,45 @@
  */
 package org.example.tariff.config;
 
+import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 
 /**
  *
  * @author root
  */
-@Configuration
+@Validated
 @Component
 @ConfigurationProperties
 @PropertySource("classpath:notification.properties")
-public class NotificationConfig {
+public class NotificationProperties {
+    @NotNull
     @Value("${notification.subject}")
     String subject;
+    @NotNull
     @Value("${notification.body}")
      String body;
+    @NotNull
     @Value("${notification.tariffName}")
      String tariffName;
     @Value("${notification.nomenclature}")
     String nomenclature;
+    @NotNull
     @Value("${notification.oldPrice}")
     String oldPrice;
+    @NotNull
     @Value("${notification.currency}")
     String currency;
+    @NotNull
     @Value("${notification.newPrice}")
     String newPrice;
+    @NotNull
     @Value("${notification.currencyValue}")
     String currencyValue;  
     //getters setters    
