@@ -42,18 +42,25 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler{
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    
     /**
-     * Handle all exceptions
+     * Handle all exceptions and package cause
      * 
      * @param ex Exception
      * @param request
      * @return 
      */
-    @ExceptionHandler({ Exception.class })
-    public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
-        return buildResponseEntity(new ApiError( HttpStatus.INTERNAL_SERVER_ERROR,"error occurred", ex ));
+    
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex,
+                                             Object body,
+                                             HttpHeaders headers,
+                                             HttpStatus status,
+                                             WebRequest request){
+         ApiError err=new ApiError( HttpStatus.INTERNAL_SERVER_ERROR,"error occurred", ex );
+        err.getSubErrors().add(ApiError.SubErrorWrapper(ex.getCause()));
+        return buildResponseEntity( err);
     }
+    
     
     /**
      * Handle MissingServletRequestParameterException. Triggered when a 'required' request parameter is missing.
