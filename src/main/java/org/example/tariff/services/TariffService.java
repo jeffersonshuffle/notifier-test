@@ -6,6 +6,7 @@ import java.util.Date;
 
 
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -55,7 +56,7 @@ public class TariffService
 			isolation= Isolation. DEFAULT )
 	public TariffDTO findById(Long id) {
 		Tariff t= tariffRepository.findOne(id);
-                
+              
 		return BeanCopyUtil.toTariffDTO(t);
 	}
         
@@ -64,13 +65,22 @@ public class TariffService
 			timeout=30,
 			propagation= Propagation. SUPPORTS ,
 			isolation= Isolation. DEFAULT )
-        public void updateDetailsFor(Long tariffId,TariffDetailsDTO details){
+        public void updateDetailsFor(Long tariffId,TariffDetailsDTO details) {
             if(details==null)throw new IllegalArgumentException("details must not be null");
             if(!tariffRepository.exists(tariffId))
-                throw new EntityNotFoundException(tariffId,this.toString());
-            TariffDetails item=detailsRepository.findOne(details.getId());
-                                                    
-            
+                throw new EntityNotFoundException(Tariff.class,tariffId.toString());
+            Long id=details.getId();
+            TariffDetails item;
+            try{
+            item = detailsRepository.findById(id)
+                    .orElseThrow(
+                            
+                            ()->{throw new EntityNotFoundException(TariffDetails.class,id.toString());}                                       
+                    );
+            }
+            catch(Throwable ex){
+                throw new EntityNotFoundException(TariffDetails.class,id.toString());
+                    }
             TariffDetails d= BeanCopyUtil.toTariffDetails(details);
           
             item.updateFrom(d);

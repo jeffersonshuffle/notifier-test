@@ -1,6 +1,7 @@
 package org.example.tariff.services;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import org.example.tariff.config.NotificationProperties;
 import org.example.tariff.entities.NotificationQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,15 +73,17 @@ public class NotificationService {
 			propagation= Propagation. SUPPORTS ,
 			isolation= Isolation. DEFAULT )
 	public void sendNotifications() {
-            List<NotificationQuery> queries= queryRepository.findByStartBefore(new Date());
-            if(queries==null)return;
-            processSend(queries);
+            Optional<List<NotificationQuery>> queries= queryRepository.findByStartBefore(new Date());
+            
+            queries.ifPresent(q->processSend(q));
+            
 	}
         
         // mock for notification queue processing
         // just delete
         void processSend(List<NotificationQuery> queries){
-            queries.stream().forEach(q->queryRepository.delete(q.getId()));
+            queryRepository.deleteInBatch(queries);
+            
         }
 
 }

@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Random;
+import org.example.tariff.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,7 +54,7 @@ public class TariffController
             StringBuilder sb=new StringBuilder();
             sb.append("<p>API Description</p>")
                     .append("<p>/api-tariff-notifier  is app base address</p>")
-              .append("<p>/test{id} METOD GET PARAMS id - fuction for randomly update details of tariff with {id}</p>")
+              .append("<p>/test/{id} METOD GET PARAMS id - fuction for randomly update details of tariff with {id}</p>")
                     .append("<p>/users METOD GET  PARAMS page=1 size=5 -  list of all users in db</p>" )
                     .append("<p>/tariffs METOD GET  PARAMS page=1 size=5 -  list of all tariffs with details in db</p>")
                     .append("<p>PARAMS page - page number for pagination; size - size of page</p>")
@@ -65,6 +66,7 @@ public class TariffController
         @ApiOperation(value = "Testing update details of tariff with id")
         @RequestMapping(value="/test/{id}", method=RequestMethod.GET)
         public HttpEntity<?> test(@PathVariable(value="id") Long tariffId){
+            try{
             TariffDTO t= tariffService.findById(tariffId);
                    
              Random randomGenerator = new Random();
@@ -79,7 +81,10 @@ public class TariffController
            
             t.getTariffDetailsCollection().forEach(d->d.setPricePerUnit(value ));
             t.getTariffDetailsCollection().forEach(d->{tariffService.updateDetailsFor(t.getId(), d);});        
-                  
+            }
+            catch(Exception ex){
+                throw new EntityNotFoundException(TariffDTO.class,tariffId.toString());
+            }
             
             return new ServiceResponse<>(HttpStatus.OK);
         }
@@ -118,21 +123,35 @@ public class TariffController
         
 	
         @ApiOperation(value ="Notify user about tariff changes; nType is notification Type (0-message,1-template)")
-	@RequestMapping(value="/notify/{nType}", method=RequestMethod.POST)
-	public HttpEntity<NotificationDTO> sendNotification(
-                @PathVariable(value="nType") String notificationType,
+	@RequestMapping(value="/notify/t", method=RequestMethod.POST)
+	public HttpEntity<NotificationDTO> sendNotificationTemplate(
+               
                 @RequestBody NotifyRequest request) {
 		if(request.getUser().getId()==0||request.getTariff().getId()==0)
                     throw new IllegalArgumentException();
                 
-		NotificationDTO note=notificationService.processRequestNotification(notificationType,request);
+		NotificationDTO note=notificationService.processRequestNotification("t",request);
+		if(note.getSubject()!=null)
+                    return new ServiceResponse<>(note);
+                else
+                    return new ServiceResponse<>(HttpStatus.OK);
+	}
+        @ApiOperation(value ="Notify user about tariff changes; nType is notification Type (0-message,1-template)")
+	@RequestMapping(value="/notify", method=RequestMethod.POST)
+	public HttpEntity<NotificationDTO> sendNotification(
+               
+                @RequestBody NotifyRequest request) {
+		if(request.getUser().getId()==0||request.getTariff().getId()==0)
+                    throw new IllegalArgumentException();
+                
+		NotificationDTO note=notificationService.processRequestNotification("n",request);
 		if(note.getSubject()!=null)
                     return new ServiceResponse<>(note);
                 else
                     return new ServiceResponse<>(HttpStatus.OK);
 	}
 
-        @ApiOperation(value ="Get empty notification request for /notify/{nType}" )
+        @ApiOperation(value ="Get empty notification request for /notify" )
         @RequestMapping(value="/notify/empty", method=RequestMethod.GET)
 	public HttpEntity<NotifyRequest> getEmptyNotificationRequest() {
 		
