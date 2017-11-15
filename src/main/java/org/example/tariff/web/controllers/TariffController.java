@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.Date;
 import java.util.Random;
 import org.example.tariff.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public class TariffController
         @ApiOperation(value = "Testing update details of tariff with id")
         @RequestMapping(value="/test/{id}", method=RequestMethod.GET)
         public HttpEntity<?> test(@PathVariable(value="id") Long tariffId){
-            try{
+            
             TariffDTO t= tariffService.findById(tariffId);
                    
              Random randomGenerator = new Random();
@@ -80,11 +81,8 @@ public class TariffController
             BigDecimal value = new BigDecimal(f,new MathContext(2, RoundingMode.HALF_EVEN));
            
             t.getTariffDetailsCollection().forEach(d->d.setPricePerUnit(value ));
-            t.getTariffDetailsCollection().forEach(d->{tariffService.updateDetailsFor(t.getId(), d);});        
-            }
-            catch(IllegalArgumentException ex){
-                throw new EntityNotFoundException(TariffDTO.class,tariffId.toString());
-            }
+            t.getTariffDetailsCollection().forEach(d->{tariffService.updateDetails( d);});        
+            
             
             return new ServiceResponse<>(HttpStatus.OK);
         }
@@ -160,10 +158,10 @@ public class TariffController
 	}
         
         @ApiOperation(value ="Update tariff details with id" )
-        @RequestMapping(value="/tariffs/update/{id}", method=RequestMethod.POST)
-	public HttpEntity<?> ubdateTariffDetails( @PathVariable(value="id") Long tariffId,
+        @RequestMapping(value="/tariffs/update", method=RequestMethod.POST)
+	public HttpEntity<?> ubdateTariffDetails( 
                 @RequestBody TariffDetailsDTO details) {
-		tariffService.updateDetailsFor(tariffId,details);
+		tariffService.updateDetails(details);
 		return new ServiceResponse<>(HttpStatus.OK);
 	}
 	

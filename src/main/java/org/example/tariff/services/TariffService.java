@@ -49,6 +49,14 @@ public class TariffService
                 
 		return f.createResource( tariffRepository.findAll(page));
 	}
+        
+        
+        /**
+         * Tariff find By Id
+         * 
+         * @param id Tariff
+         * @return TariffDTO
+         */
 	@Transactional(
 			readOnly= true ,
 			timeout=30,
@@ -56,8 +64,9 @@ public class TariffService
 			isolation= Isolation. DEFAULT )
 	public TariffDTO findById(Long id) {
 		Tariff t= tariffRepository.findOne(id);
-              
-		return BeanCopyUtil.toTariffDTO(t);
+                if(t==null)
+                 throw new EntityNotFoundException(Tariff.class,new String[] {"tariffId",id.toString()});
+                return BeanCopyUtil.toTariffDTO(t);
 	}
         
         @Transactional(
@@ -65,22 +74,24 @@ public class TariffService
 			timeout=30,
 			propagation= Propagation. SUPPORTS ,
 			isolation= Isolation. DEFAULT )
-        public void updateDetailsFor(Long tariffId,TariffDetailsDTO details) {
+        public void updateDetails(TariffDetailsDTO details) {
             if(details==null)throw new IllegalArgumentException("details must not be null");
+            Long tariffId=details.getTariffId();
             if(!tariffRepository.exists(tariffId))
-                throw new EntityNotFoundException(Tariff.class,tariffId.toString());
+                throw new EntityNotFoundException(Tariff.class,new String[] {"tariffId",tariffId.toString()});
             Long id=details.getId();
             TariffDetails item;
             try{
             item = detailsRepository.findById(id)
                     .orElseThrow(
                             
-                            ()->{throw new EntityNotFoundException(TariffDetails.class,id.toString());}                                       
+                            ()->{throw new EntityNotFoundException(TariffDetails.class,
+                                    new String[] {"detailsId",id.toString()});}                                       
                     );
             }
             catch(Throwable ex){
-                throw new EntityNotFoundException(TariffDetails.class,id.toString());
-                    }
+                throw new EntityNotFoundException((EntityNotFoundException)ex);
+            }
             TariffDetails d= BeanCopyUtil.toTariffDetails(details);
           
             item.updateFrom(d);
