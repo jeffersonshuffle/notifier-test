@@ -22,6 +22,10 @@ import java.util.Set;
 @JsonTypeIdResolver(LowerCaseClassNameResolver.class)
 class ApiError {
 
+    static ApiSubError SubErrorWrapper(Throwable cause) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     private HttpStatus status;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private Date timestamp;
@@ -147,10 +151,22 @@ class ApiError {
 
 
 
-    abstract class ApiSubError {
+    abstract class ApiSubError extends Throwable {
 
     }
+    
+    class SubErrorWrapper extends ApiSubError {
+        Throwable exception;
 
+        public Throwable getException() {
+            return exception;
+        }
+
+     
+        
+       
+        public SubErrorWrapper(Throwable ex){exception=ex;}
+    }
     
     class ApiValidationError extends ApiSubError {
         private String object;

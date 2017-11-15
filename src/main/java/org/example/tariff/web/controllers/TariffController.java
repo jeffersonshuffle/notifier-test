@@ -82,7 +82,7 @@ public class TariffController
             t.getTariffDetailsCollection().forEach(d->d.setPricePerUnit(value ));
             t.getTariffDetailsCollection().forEach(d->{tariffService.updateDetailsFor(t.getId(), d);});        
             }
-            catch(Exception ex){
+            catch(IllegalArgumentException ex){
                 throw new EntityNotFoundException(TariffDTO.class,tariffId.toString());
             }
             
