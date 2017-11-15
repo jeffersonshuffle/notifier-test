@@ -52,16 +52,8 @@ public class TariffController
         
         @RequestMapping(value="/", method=RequestMethod.GET)
         public String home(){
-            StringBuilder sb=new StringBuilder();
-            sb.append("<p>API Description</p>")
-                    .append("<p>/api-tariff-notifier  is app base address</p>")
-              .append("<p>/test/{id} METOD GET PARAMS id - fuction for randomly update details of tariff with {id}</p>")
-                    .append("<p>/users METOD GET  PARAMS page=1 size=5 -  list of all users in db</p>" )
-                    .append("<p>/tariffs METOD GET  PARAMS page=1 size=5 -  list of all tariffs with details in db</p>")
-                    .append("<p>PARAMS page - page number for pagination; size - size of page</p>")
-                    .append("<p>/notify METOD GET  PARAMS page=1 size=5</p>")
-                    .append("<p>/tariffs/update/{id} METOD POST PARAMS id REQUEST BODY json object tariff detais</p>");
-             return  sb.toString();
+
+             return  "hello";
         }
         
         @ApiOperation(value = "Testing update details of tariff with id")
