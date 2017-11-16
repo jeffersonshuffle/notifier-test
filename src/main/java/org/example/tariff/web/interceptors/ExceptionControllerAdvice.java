@@ -187,9 +187,9 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler{
     }
 
  /**
-     * Handle Exception, handle generic Exception.class
+     * Handle MethodArgumentTypeMismatchException
      *
-     * @param ex the Exception
+     * @param ex the MethodArgumentTypeMismatchException
      * @param request
      * @return the ApiError object
      */

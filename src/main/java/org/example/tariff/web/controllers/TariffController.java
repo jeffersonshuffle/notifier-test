@@ -6,9 +6,10 @@ import io.swagger.annotations.ApiOperation;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Date;
+
 import java.util.Random;
-import org.example.tariff.exceptions.EntityNotFoundException;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,9 +26,13 @@ import org.example.tariff.model.*;
 import org.example.tariff.services.NotificationService;
 import org.example.tariff.services.TariffService;
 import org.example.tariff.services.UserService;
+import org.example.tariff.validators.IsCorrectNotification;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -84,7 +89,7 @@ public class TariffController
         
 	public HttpEntity<Page<UserDTO>> listUsers(@RequestParam(name="page", defaultValue="0") int page, 
 			@RequestParam(name="size", defaultValue="1") int size) {
-             if(size==0)throw new IllegalArgumentException("Page size must not be less than one!");
+           
             if(size>100)size=100;
 		PageRequest request = new PageRequest(page, size);
 		Page<UserDTO> pageData = userService.findAll(request);
@@ -100,7 +105,7 @@ public class TariffController
 	@RequestMapping(value="/tariffs", method=RequestMethod.GET)
 	public HttpEntity<Page<TariffDTO>> listTariffs(@RequestParam(name="page", defaultValue="0") int page, 
 			@RequestParam(name="size", defaultValue="1") int size) {
-            if(size==0)throw new IllegalArgumentException("Page size must not be less than one!");
+           
             if(size>100)size=100;
                              
             
@@ -111,14 +116,13 @@ public class TariffController
 		return new ServiceResponse<>(pageData);
 	}
         
-	
-        @ApiOperation(value ="Notify user about tariff changes; nType is notification Type (0-message,1-template)")
+	@PostMapping
+        @ApiOperation(value ="Notify user about tariff changes")
 	@RequestMapping(value="/notify/t", method=RequestMethod.POST)
 	public HttpEntity<NotificationDTO> sendNotificationTemplate(
-               
+               @Valid
                 @RequestBody NotifyRequest request) {
-		if(request.getUser().getId()==0||request.getTariff().getId()==0)
-                    throw new IllegalArgumentException();
+		
                 
 		NotificationDTO note=notificationService.processRequestNotification("t",request);
 		if(note.getSubject()!=null)
@@ -126,19 +130,21 @@ public class TariffController
                 else
                     return new ServiceResponse<>(HttpStatus.OK);
 	}
-        @ApiOperation(value ="Notify user about tariff changes; nType is notification Type (0-message,1-template)")
+        @PostMapping
+        @ApiOperation(value ="Notify user about tariff changes")
 	@RequestMapping(value="/notify", method=RequestMethod.POST)
 	public HttpEntity<NotificationDTO> sendNotification(
                
+                @Valid
                 @RequestBody NotifyRequest request) {
-		if(request.getUser().getId()==0||request.getTariff().getId()==0)
-                    throw new IllegalArgumentException();
+            
+            
                 
-		NotificationDTO note=notificationService.processRequestNotification("n",request);
-		if(note.getSubject()!=null)
-                    return new ServiceResponse<>(note);
-                else
-                    return new ServiceResponse<>(HttpStatus.OK);
+            NotificationDTO note=notificationService.processRequestNotification("n",request);
+            if(note.getSubject()!=null)
+                return new ServiceResponse<>(note);
+            else
+                return new ServiceResponse<>(HttpStatus.OK);
 	}
 
         @ApiOperation(value ="Get empty notification request for /notify" )
@@ -149,9 +155,11 @@ public class TariffController
 		return new ServiceResponse<>(NotifyRequest.getEmpty());
 	}
         
-        @ApiOperation(value ="Update tariff details with id" )
-        @RequestMapping(value="/tariffs/update", method=RequestMethod.POST)
+        @ApiOperation(value ="Update tariff details" )
+        @PostMapping
+        @RequestMapping(value="/tariffs/update", method=RequestMethod.PUT)
 	public HttpEntity<?> ubdateTariffDetails( 
+                @Valid
                 @RequestBody TariffDetailsDTO details) {
 		tariffService.updateDetails(details);
 		return new ServiceResponse<>(HttpStatus.OK);

@@ -1,16 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.example.tariff.model;
 
 import java.util.Date;
+import javax.validation.constraints.NotNull;
+import org.example.tariff.validators.IsCorrectNotification;
 
-/**
- *
- * @author root
- */
+
+
+@IsCorrectNotification
 public class NotifyRequest {
     public static NotifyRequest getEmpty(){
         NotifyRequest request=new NotifyRequest();
@@ -20,10 +17,13 @@ public class NotifyRequest {
         request.setEndOfPeriod(new Date());
         return request;
     }
-    
+    @NotNull
     UserDTO user;
+    @NotNull
     TariffDTO tariff;
+    @NotNull
     Date startOfPeriod;
+    @NotNull
     Date endOfPeriod;
     
     public NotifyRequest(){
