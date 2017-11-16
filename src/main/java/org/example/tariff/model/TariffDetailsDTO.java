@@ -2,10 +2,11 @@ package org.example.tariff.model;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import org.example.tariff.validators.IsValidDetails;
 
 
 
-
+@IsValidDetails
 public class TariffDetailsDTO {
 	
     public static  TariffDetailsDTO getEmpty(){
@@ -17,6 +18,7 @@ public class TariffDetailsDTO {
         details.setPricePerUnit(BigDecimal.ZERO);
         return details;
     } 
+   
     private Long id;
     private Long tariffId;
     private BigDecimal pricePerUnit;
