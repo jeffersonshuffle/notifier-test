@@ -8,13 +8,13 @@ import org.example.tariff.model.NotificationDTO;
 import org.example.tariff.model.TariffDTO;
 import org.example.tariff.model.TariffDetailsDTO;
 import org.example.tariff.model.UserDTO;
-import org.example.tariff.repositories.TariffRepository;
+
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+
 
 public final class BeanCopyUtil
 {
-	@Autowired TariffRepository tariffRepository;
+	
 	private BeanCopyUtil()
 	{
 	}

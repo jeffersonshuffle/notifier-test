@@ -16,6 +16,7 @@ import org.example.tariff.model.NotifyRequest;
 import org.example.tariff.repositories.NotificationQueryRepository;
 import org.example.tariff.repositories.NotificationRepository;
 import org.example.tariff.utils.BeanCopyUtil;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 
 
@@ -68,6 +69,7 @@ public class NotificationService {
         }
         
         @Scheduled(fixedDelay=10000)
+        @Async
         @Transactional( readOnly= false ,
 			timeout=30,
 			propagation= Propagation. SUPPORTS ,
@@ -81,6 +83,7 @@ public class NotificationService {
         
         // mock for notification queue processing
         // just delete
+        @Async
         void processSend(List<NotificationQuery> queries){
             queryRepository.deleteInBatch(queries);
             

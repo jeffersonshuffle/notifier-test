@@ -26,10 +26,10 @@ import org.example.tariff.model.*;
 import org.example.tariff.services.NotificationService;
 import org.example.tariff.services.TariffService;
 import org.example.tariff.services.UserService;
-import org.example.tariff.validators.IsCorrectNotification;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
+
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
