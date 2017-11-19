@@ -1,6 +1,6 @@
 # notifier-test
 
-build: <b>mvn package</b>
+build: <b>mvn clean package</b>
 
 run: <b>mvn spring-boot:run -Dserver.port=9999</b>
 
