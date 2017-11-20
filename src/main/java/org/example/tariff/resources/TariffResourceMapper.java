@@ -5,7 +5,7 @@
  */
 package org.example.tariff.resources;
 
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import org.example.tariff.entities.Tariff;

@@ -3,12 +3,11 @@
  */
 package org.example.tariff.resources;
 
-import java.io.Serializable;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
+
 
 import  org.example.tariff.entities.User;
 import  org.example.tariff.model.UserDTO;

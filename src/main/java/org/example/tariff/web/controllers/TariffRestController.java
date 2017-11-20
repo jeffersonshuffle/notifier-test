@@ -46,7 +46,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping(value="/api-tariff-notifier")
-public class TariffController
+public class TariffRestController
 {
 	
 	
@@ -99,9 +99,9 @@ public class TariffController
 		Page<UserDTO> pageData = userService.findAll(request);
 		
 		
-		for(UserDTO user:pageData.getContent()) {
-			user.setTariffName(tariffService.findById(user.getTariffId()).getName());
-		}
+		pageData.getContent().stream().forEach(user->{
+			user.setTariffName(tariffService.findById(user.getTariffId()).getName());}
+		);
 		return new ServiceResponse<>(pageData);
 	}
         

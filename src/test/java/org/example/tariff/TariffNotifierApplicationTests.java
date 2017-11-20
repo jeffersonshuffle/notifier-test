@@ -2,7 +2,7 @@ package org.example.tariff;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.example.tariff.web.controllers.TariffController;
+import org.example.tariff.web.controllers.TariffRestController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class TariffNotifierApplicationTests {
     @Autowired
-    private TariffController controller;
+    private TariffRestController controller;
 
 
 

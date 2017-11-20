@@ -14,6 +14,7 @@ import org.example.tariff.model.TariffDetailsDTO;
 import org.example.tariff.repositories.TariffDetailsRepository;
 import org.example.tariff.repositories.TariffRepository;
 import org.example.tariff.services.TariffService;
+import org.example.tariff.services.TariffServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,7 +36,7 @@ public class TariffServiceUnitTest {
   
         @Bean
         public TariffService tariffService() {
-            return new TariffService();
+            return new TariffServiceImpl();
         }
     }
  
