@@ -13,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.example.tariff.entities.PriceChangeReport;
 
 import org.example.tariff.exceptions.NotificationProcessException;
-import org.example.tariff.model.Notification;
+import org.example.tariff.model.NotificationDTO;
 import org.example.tariff.model.NotifyRequest;
 import org.example.tariff.repositories.NotificationQueryRepository;
 import org.example.tariff.repositories.NotificationRepository;
-import org.example.tariff.utils.BeanCopyUtil;
+
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -60,7 +60,7 @@ public class NotificationService {
 			timeout=30,
 			propagation= Propagation. SUPPORTS ,
 			isolation= Isolation. DEFAULT )
-        public Notification processRequestNotification(final NotificationType notificationType,NotifyRequest request)
+        public NotificationDTO processRequestNotification(final NotificationType notificationType,NotifyRequest request)
                 throws NotificationProcessException
         {
             if(request.getStartOfPeriod().compareTo(new Date())<=0){
@@ -75,7 +75,7 @@ public class NotificationService {
                 }   
             }
             tryPutNotification( request);
-            return Notification.getEmty();
+            return NotificationDTO.getEmty();
         }
         
         @Transactional( readOnly= false ,

@@ -13,7 +13,7 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.example.tariff.config.NotificationProperties;
 import org.example.tariff.entities.PriceChangeReport;
-import org.example.tariff.model.Notification;
+import org.example.tariff.model.NotificationDTO;
 import org.example.tariff.utils.BeanCopyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,7 +34,7 @@ public class NotificationBuilder {
     }
     
     
-    void generateSubject(Notification n){
+    void generateSubject(NotificationDTO n){
         Map map = new HashMap();
         map.put(notificationConfig.getTariffName(),n.getTariffName());
         VelocityEngine ve = new VelocityEngine();
@@ -50,7 +50,7 @@ public class NotificationBuilder {
     }
     
     
-    void generateBody(Notification n){
+    void generateBody(NotificationDTO n){
         Map map = new HashMap();
         map.put(notificationConfig.getTariffName(), n.getTariffName());
         map.put(notificationConfig.getNomenclature(), n.getNomenclature());
@@ -68,15 +68,15 @@ public class NotificationBuilder {
         n.setBody( writer.toString() );
     }
     
-    public Notification generateNotificationTemplate(PriceChangeReport report) {
-        Notification n= new Notification();
+    public NotificationDTO generateNotificationTemplate(PriceChangeReport report) {
+        NotificationDTO n= new NotificationDTO();
     	n.setSubject(notificationConfig.getSubject());
         n.setBody(notificationConfig.getBody());
         	
         return n;
     }
-    public Notification generateNotification(PriceChangeReport report) {
-         Notification n= BeanCopyUtil.toNotification(report);
+    public NotificationDTO generateNotification(PriceChangeReport report) {
+         NotificationDTO n= BeanCopyUtil.toNotificationDTO(report);
          
     	generateSubject(n);
         generateBody(n);

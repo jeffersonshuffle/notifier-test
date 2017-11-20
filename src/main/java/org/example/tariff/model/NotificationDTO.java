@@ -2,25 +2,16 @@ package org.example.tariff.model;
 
 
 
-import java.io.StringWriter;
+
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.app.VelocityEngine;
-
-import org.example.tariff.config.NotificationProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 
 
 
 
 
-public class Notification {
+
+public class NotificationDTO {
 
     
     
@@ -36,8 +27,8 @@ public class Notification {
     private String subject;
     private String body;
     
-   public static Notification getEmty(){
-       return new Notification();
+   public static NotificationDTO getEmty(){
+       return new NotificationDTO();
    }
  
 

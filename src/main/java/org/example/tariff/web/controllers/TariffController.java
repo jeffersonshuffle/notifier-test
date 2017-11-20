@@ -123,12 +123,12 @@ public class TariffController
 	@PostMapping
         @ApiOperation(value ="Notify user about tariff changes")
 	@RequestMapping(value="/notify/t", method=RequestMethod.POST)
-	public HttpEntity<Notification> sendNotificationTemplate(
+	public HttpEntity<NotificationDTO> sendNotificationTemplate(
                @Valid
                 @RequestBody NotifyRequest request) {
 		
                 
-		Notification note=notificationService.processRequestNotification(
+		NotificationDTO note=notificationService.processRequestNotification(
                         NotificationService.NotificationType.TEMPLATE,
                         request
                     );
@@ -140,14 +140,14 @@ public class TariffController
         @PostMapping
         @ApiOperation(value ="Notify user about tariff changes")
 	@RequestMapping(value="/notify", method=RequestMethod.POST)
-	public HttpEntity<Notification> sendNotification(
+	public HttpEntity<NotificationDTO> sendNotification(
                
                 @Valid
                 @RequestBody NotifyRequest request) {
             
             
                 
-            Notification note=notificationService.processRequestNotification(
+            NotificationDTO note=notificationService.processRequestNotification(
                     NotificationService.NotificationType.MESSAGE,
                     request
                 );
