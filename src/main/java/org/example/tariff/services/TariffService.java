@@ -18,6 +18,7 @@ import org.example.tariff.entities.Tariff;
 import org.example.tariff.entities.TariffDetails;
 
 import org.example.tariff.exceptions.EntityNotFoundException;
+import org.example.tariff.exceptions.EntityUpdateException;
 import org.example.tariff.model.TariffDTO;
 import org.example.tariff.model.TariffDetailsDTO;
 import org.example.tariff.repositories.TariffDetailsRepository;
@@ -62,7 +63,7 @@ public class TariffService
 			timeout=30,
 			propagation= Propagation. SUPPORTS ,
 			isolation= Isolation. DEFAULT )
-	public TariffDTO findById(Long id)  throws EntityNotFoundException{
+	public TariffDTO findById(Long id)   throws EntityNotFoundException{
 		Tariff t= tariffRepository.findOne(id);
                 if(t==null)
                  throw new EntityNotFoundException(Tariff.class,new String[] {"tariffId",id.toString()});
@@ -74,32 +75,41 @@ public class TariffService
 			timeout=30,
 			propagation= Propagation. SUPPORTS ,
 			isolation= Isolation. DEFAULT )
-        public void updateDetails(TariffDetailsDTO details)throws EntityNotFoundException {
-            if(details==null)throw new EntityNotFoundException(TariffDetailsDTO.class,new String[]{"object","null"});
-            Long tariffId=details.getTariffId();
-            if(!tariffRepository.exists(tariffId))
-                throw new EntityNotFoundException(Tariff.class,new String[] {"tariffId",tariffId.toString()});
-            Long id=details.getId();
-            TariffDetails item;
+        public void updateDetails(TariffDetailsDTO details)throws EntityUpdateException {
             try{
-            item = detailsRepository.findById(id)
+                if(details==null)throw 
+                    new EntityNotFoundException(TariffDetailsDTO.class,new String[]{"object","null"});
+           
+                Long tariffId=details.getTariffId();
+                if(!tariffRepository.exists(tariffId))throw
+                    new EntityNotFoundException(Tariff.class,new String[] {"tariffId",tariffId.toString()});
+                       
+               
+                Long id=details.getId();
+                TariffDetails item;
+            
+                item = detailsRepository.findById(id)
                     .orElseThrow(
                             
                             ()->{throw new EntityNotFoundException(TariffDetails.class,
                                     new String[] {"detailsId",id.toString()});}                                       
                     );
+            
+                TariffDetails d= BeanCopyUtil.toTariffDetails(details);
+          
+                item.updateFrom(d);
+                detailsRepository.save(item);
+            
+                Tariff t= tariffRepository.findOne(item.getTariffId().getId());
+                t.setDateCreated(new Date());
+                tariffRepository.save(t);
+            }
+            catch(EntityNotFoundException ex){
+                throw new EntityUpdateException(ex);
             }
             catch(Throwable ex){
-                throw new EntityNotFoundException((EntityNotFoundException)ex);
+                throw new EntityUpdateException(ex);
             }
-            TariffDetails d= BeanCopyUtil.toTariffDetails(details);
-          
-            item.updateFrom(d);
-            detailsRepository.save(item);
-            
-            Tariff t= tariffRepository.findOne(item.getTariffId().getId());
-            t.setDateCreated(new Date());
-            tariffRepository.save(t);
         }
 	
         

@@ -3,10 +3,14 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.example.tariff.entities.Tariff;
+import org.example.tariff.entities.TariffDetails;
 import org.example.tariff.exceptions.EntityNotFoundException;
+import org.example.tariff.exceptions.EntityUpdateException;
 import org.example.tariff.model.TariffDTO;
+import org.example.tariff.model.TariffDetailsDTO;
 import org.example.tariff.repositories.TariffDetailsRepository;
 import org.example.tariff.repositories.TariffRepository;
 import org.example.tariff.services.TariffService;
@@ -86,7 +90,10 @@ public class TariffServiceUnitTest {
        
         assertThat(found).isNotNull();
         assertThat(found).isNotEmpty();
- 
+        assertThat(found.getTotalElements()).isEqualTo(5);
+        assertThat(found.getTotalPages()).isEqualTo(1);
+        assertThat(found.iterator().next()).isExactlyInstanceOf(TariffDTO.class);
+        assertThat(found.iterator().next().getId()).isBetween(1L, 5L);
     }
     
     Page<Tariff> getAllTariff(PageRequest page){
@@ -101,5 +108,16 @@ public class TariffServiceUnitTest {
         return data;
     }
   
-    
+     @Test(expected = EntityUpdateException.class)
+    public void failUpdateTariffDetails()  {
+       //given
+        Optional<TariffDetails> opt=Optional.of(new TariffDetails(){{setId(0L);}});
+         Mockito.when(detailsRepository.findById(opt.get().getId()))
+                .thenReturn(opt);
+          Mockito.when(tariffRepository.exists(Long.MAX_VALUE))
+                .thenReturn(false);
+        //when
+          TariffDetailsDTO details=new TariffDetailsDTO(){{setId(1L);setTariffId(Long.MAX_VALUE);}};
+        tariffService.updateDetails(details);
+    }
 }

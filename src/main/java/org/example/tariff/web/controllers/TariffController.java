@@ -162,7 +162,7 @@ public class TariffController
                 @Valid
                 @RequestBody TariffDetailsDTO details) {
 		tariffService.updateDetails(details);
-		return new ServiceResponse<>(HttpStatus.OK);
+		return new ServiceResponse<>(HttpStatus.CREATED);
 	}
 	
 }

@@ -6,6 +6,7 @@ package org.example.tariff.web.interceptors;
 
 
 import org.example.tariff.exceptions.EntityNotFoundException;
+import org.example.tariff.exceptions.EntityUpdateException;
 import org.hibernate.exception.ConstraintViolationException;
 
 
@@ -123,6 +124,13 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler{
         return buildResponseEntity(new ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, builder.substring(0, builder.length() - 2), ex));
     }
 
+    @ExceptionHandler(EntityUpdateException.class)
+    protected ResponseEntity<Object> handleEntityUpdate(
+            EntityUpdateException ex) {
+        ApiError apiError = new ApiError(NOT_FOUND);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
     /**
      * Handles EntityNotFoundException. Created to encapsulate errors with more detail than javax.persistence.EntityNotFoundException.
      *
