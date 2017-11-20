@@ -6,13 +6,6 @@ run: <b>mvn spring-boot:run -Dserver.port=9999</b>
 
 <b>to init db run scripts from notifier-test/src/main/resources/DBScripts/ </b>
 
-
-API Description get from:
-
-<b>[host root]/v2/api-docs</b>
-  
-  in Json format
-
 <p><b>Short API Description</b></p>
                    <p><b>/api-tariff-notifier</b>  is app base address</p>
               <p><b>/test/{id}</b> METOD GET PARAMS id - fuction for randomly update details of tariff with {id}
