@@ -62,7 +62,7 @@ public class TariffService
 			timeout=30,
 			propagation= Propagation. SUPPORTS ,
 			isolation= Isolation. DEFAULT )
-	public TariffDTO findById(Long id) {
+	public TariffDTO findById(Long id)  throws EntityNotFoundException{
 		Tariff t= tariffRepository.findOne(id);
                 if(t==null)
                  throw new EntityNotFoundException(Tariff.class,new String[] {"tariffId",id.toString()});
@@ -74,8 +74,8 @@ public class TariffService
 			timeout=30,
 			propagation= Propagation. SUPPORTS ,
 			isolation= Isolation. DEFAULT )
-        public void updateDetails(TariffDetailsDTO details) {
-            if(details==null)throw new IllegalArgumentException("details must not be null");
+        public void updateDetails(TariffDetailsDTO details)throws EntityNotFoundException {
+            if(details==null)throw new EntityNotFoundException(TariffDetailsDTO.class,new String[]{"object","null"});
             Long tariffId=details.getTariffId();
             if(!tariffRepository.exists(tariffId))
                 throw new EntityNotFoundException(Tariff.class,new String[] {"tariffId",tariffId.toString()});
