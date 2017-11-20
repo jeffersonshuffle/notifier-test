@@ -1,8 +1,11 @@
 # notifier-test
 
-build: <b>mvn package</b>
+build: <b>mvn clean package</b>
 
 run: <b>mvn spring-boot:run -Dserver.port=9999</b>
+
+<b>to init db run scripts from notifier-test/src/main/resources/DBScripts/ </b>
+
 
 API Description get from:
 
