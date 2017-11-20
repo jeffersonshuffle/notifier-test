@@ -2,7 +2,7 @@ package org.example.tariff.services;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import org.example.tariff.config.NotificationProperties;
+
 import org.example.tariff.entities.NotificationQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,7 +11,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.example.tariff.entities.PriceChangeReport;
-import org.example.tariff.model.NotificationDTO;
+
+import org.example.tariff.exceptions.NotificationProcessException;
+import org.example.tariff.model.Notification;
 import org.example.tariff.model.NotifyRequest;
 import org.example.tariff.repositories.NotificationQueryRepository;
 import org.example.tariff.repositories.NotificationRepository;
@@ -25,47 +27,72 @@ import org.springframework.scheduling.annotation.Scheduled;
 @Service
 @Transactional
 public class NotificationService {
-	@Autowired
-	NotificationRepository notificationRepository;
-        @Autowired
-        NotificationQueryRepository queryRepository;
-         @Autowired
-        NotificationProperties notificationTemplate;
+    
+    public enum NotificationType{TEMPLATE,MESSAGE};
+	
+    NotificationRepository notificationRepository;
         
-	@Transactional( readOnly= true ,
+    NotificationQueryRepository queryRepository;
+    NotificationBuilder  notificationBuilder;    
+    
+    @Autowired
+    public void setNotificationBuilder(NotificationBuilder notificationBuilder) {
+        this.notificationBuilder = notificationBuilder;
+    }
+   
+    
+    @Autowired
+    public void setNotificationRepository(NotificationRepository notificationRepository) {
+        this.notificationRepository = notificationRepository;
+    }
+    @Autowired
+    public void setQueryRepository( NotificationQueryRepository queryRepository) {
+        this.queryRepository = queryRepository;
+    }
+    
+   
+        
+	
+       
+        
+        
+        @Transactional( readOnly= true ,
 			timeout=30,
 			propagation= Propagation. SUPPORTS ,
 			isolation= Isolation. DEFAULT )
-	public NotificationDTO getNotificationTemplateFor(Long tariffId) {
-		 PriceChangeReport r=notificationRepository.findByTariffId( tariffId);
-                 return BeanCopyUtil.toNotificationDTO(r)
-                                .initNotificationTemplate(notificationTemplate)
-                                .generateNotificationTemplate();
-	}
-        public NotificationDTO getNotificationMessageFor(Long tariffId) {
-		 PriceChangeReport r=notificationRepository.findByTariffId( tariffId);
-                 return BeanCopyUtil.toNotificationDTO(r)
-                         .initNotificationTemplate(notificationTemplate)
-                         .generateNotification();
-	}
+        public Notification processRequestNotification(final NotificationType notificationType,NotifyRequest request)
+                throws NotificationProcessException
+        {
+            if(request.getStartOfPeriod().compareTo(new Date())<=0){
+                PriceChangeReport r=notificationRepository.findByTariffId( request.getTariff().getId());
+                switch(notificationType){
+                    case TEMPLATE:
+                        return this.notificationBuilder
+                                .generateNotificationTemplate(r);
+                    case MESSAGE:   
+                        return this.notificationBuilder
+                                .generateNotification(r);
+                }   
+            }
+            tryPutNotification( request);
+            return Notification.getEmty();
+        }
         
         @Transactional( readOnly= false ,
 			timeout=30,
 			propagation= Propagation. SUPPORTS ,
 			isolation= Isolation. DEFAULT )
-        public NotificationDTO processRequestNotification(String notificationType,NotifyRequest request){
-            if(request.getStartOfPeriod().compareTo(new Date())<=0)
-                if(notificationType.equals("t"))
-                    return getNotificationTemplateFor(request.getTariff().getId());
-                else 
-                    return getNotificationMessageFor(request.getTariff().getId());
-                    
-            
-            NotificationQuery n=new NotificationQuery(0L, request.getTariff().getId()
+        void tryPutNotification(NotifyRequest request)
+                throws NotificationProcessException
+        {
+            try{
+                NotificationQuery n=new NotificationQuery(0L, request.getTariff().getId()
                     , request.getUser().getId(), request.getStartOfPeriod(), request.getEndOfPeriod());
-            queryRepository.save(n);
-            
-            return NotificationDTO.getEmty();
+                queryRepository.save(n);
+            }
+            catch(Throwable ex){
+                throw new NotificationProcessException(ex);
+            }
         }
         
         @Scheduled(fixedDelay=10000)

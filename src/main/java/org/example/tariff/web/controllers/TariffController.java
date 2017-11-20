@@ -9,6 +9,8 @@ import java.math.RoundingMode;
 
 import java.util.Random;
 import javax.validation.Valid;
+import org.example.tariff.exceptions.EntityNotFoundException;
+import org.example.tariff.exceptions.EntityUpdateException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -63,7 +65,9 @@ public class TariffController
         
         @ApiOperation(value = "Testing update details of tariff with id")
         @RequestMapping(value="/test/{id}", method=RequestMethod.GET)
-        public HttpEntity<?> test(@PathVariable(value="id") Long tariffId){
+        public HttpEntity<?> test(@PathVariable(value="id") Long tariffId)
+                throws EntityNotFoundException, EntityUpdateException
+        {
             
             TariffDTO t= tariffService.findById(tariffId);
                    
@@ -78,7 +82,7 @@ public class TariffController
             BigDecimal value = new BigDecimal(f,new MathContext(2, RoundingMode.HALF_EVEN));
            
             t.getTariffDetailsCollection().forEach(d->d.setPricePerUnit(value ));
-            t.getTariffDetailsCollection().forEach(d->{tariffService.updateDetails( d);});        
+            t.getTariffDetailsCollection().forEach(d->{tariffService.updateDetails(d);});        
             
             
             return new ServiceResponse<>(HttpStatus.OK);
@@ -119,12 +123,15 @@ public class TariffController
 	@PostMapping
         @ApiOperation(value ="Notify user about tariff changes")
 	@RequestMapping(value="/notify/t", method=RequestMethod.POST)
-	public HttpEntity<NotificationDTO> sendNotificationTemplate(
+	public HttpEntity<Notification> sendNotificationTemplate(
                @Valid
                 @RequestBody NotifyRequest request) {
 		
                 
-		NotificationDTO note=notificationService.processRequestNotification("t",request);
+		Notification note=notificationService.processRequestNotification(
+                        NotificationService.NotificationType.TEMPLATE,
+                        request
+                    );
 		if(note.getSubject()!=null)
                     return new ServiceResponse<>(note);
                 else
@@ -133,14 +140,17 @@ public class TariffController
         @PostMapping
         @ApiOperation(value ="Notify user about tariff changes")
 	@RequestMapping(value="/notify", method=RequestMethod.POST)
-	public HttpEntity<NotificationDTO> sendNotification(
+	public HttpEntity<Notification> sendNotification(
                
                 @Valid
                 @RequestBody NotifyRequest request) {
             
             
                 
-            NotificationDTO note=notificationService.processRequestNotification("n",request);
+            Notification note=notificationService.processRequestNotification(
+                    NotificationService.NotificationType.MESSAGE,
+                    request
+                );
             if(note.getSubject()!=null)
                 return new ServiceResponse<>(note);
             else

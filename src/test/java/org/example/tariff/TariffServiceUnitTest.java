@@ -1,6 +1,6 @@
+package org.example.tariff;
 
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +48,7 @@ public class TariffServiceUnitTest {
     private TariffDetailsRepository detailsRepository;
  
     @Test
-    public void canRetreiveTariffWithIdWhenExists() {
+    public void canRetreiveTariffWithIdWhenExists() throws Exception{
         Tariff tariff = new Tariff();
         tariff.setId(1L);
         Mockito.when(tariffRepository.findOne(tariff.getId()))
@@ -63,16 +63,12 @@ public class TariffServiceUnitTest {
     }
     
     @Test(expected = EntityNotFoundException.class)
-    public void canRetrieveTariffByIdWhenDoesNotExist()  {
+    public void canRetrieveTariffByIdWhenDoesNotExist(){
       
         EntityNotFoundException failure=
             new EntityNotFoundException(Tariff.class,new String[] {"id","0"});
         Mockito.when(tariffRepository.findOne(0L))
                 .thenThrow(failure);
-
-        
-       
-
         tariffService.findById(0L);
     }
     

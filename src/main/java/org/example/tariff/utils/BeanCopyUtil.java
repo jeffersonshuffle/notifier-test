@@ -4,7 +4,7 @@ import org.example.tariff.entities.PriceChangeReport;
 import org.example.tariff.entities.Tariff;
 import org.example.tariff.entities.TariffDetails;
 import org.example.tariff.entities.User;
-import org.example.tariff.model.NotificationDTO;
+import org.example.tariff.model.Notification;
 import org.example.tariff.model.TariffDTO;
 import org.example.tariff.model.TariffDetailsDTO;
 import org.example.tariff.model.UserDTO;
@@ -56,10 +56,10 @@ public final class BeanCopyUtil
 		 TariffDetails  details= mapper.map(tDTO,  TariffDetails.class);
 		return details;		
 	}
-	public static NotificationDTO toNotificationDTO(PriceChangeReport content) {
+	public static Notification toNotification(PriceChangeReport content) {
 		ModelMapper mapper = new ModelMapper();
 		 
-		return mapper.map(content,  NotificationDTO.class);	
+		return mapper.map(content,  Notification.class);	
 	}
 	
 }

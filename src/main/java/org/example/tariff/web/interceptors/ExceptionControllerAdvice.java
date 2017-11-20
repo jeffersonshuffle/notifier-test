@@ -7,6 +7,7 @@ package org.example.tariff.web.interceptors;
 
 import org.example.tariff.exceptions.EntityNotFoundException;
 import org.example.tariff.exceptions.EntityUpdateException;
+import org.example.tariff.exceptions.NotificationProcessException;
 import org.hibernate.exception.ConstraintViolationException;
 
 
@@ -123,7 +124,12 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler{
         ex.getSupportedMediaTypes().forEach(t -> builder.append(t).append(", "));
         return buildResponseEntity(new ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, builder.substring(0, builder.length() - 2), ex));
     }
-
+   /**
+     * Handles EntityUpdateException. Created to encapsulate errors with more detail than javax.persistence.EntityNotFoundException.
+     *
+     * @param ex the EntityUpdateException
+     * @return the ApiError object
+     */
     @ExceptionHandler(EntityUpdateException.class)
     protected ResponseEntity<Object> handleEntityUpdate(
             EntityUpdateException ex) {
@@ -145,7 +151,19 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler{
         return buildResponseEntity(apiError);
     }
 
- 
+  /**
+     * Handles NotificationProcessException. Created to encapsulate errors with more detail than javax.persistence.EntityNotFoundException.
+     *
+     * @param ex the NotificationProcessException
+     * @return the ApiError object
+     */
+    @ExceptionHandler(NotificationProcessException.class)
+    protected ResponseEntity<Object> handleEntityNotFound(
+            NotificationProcessException ex) {
+        ApiError apiError = new ApiError(NOT_FOUND);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
 /**
      * Handle HttpMessageNotReadableException. Happens when request JSON is malformed.
      *
